@@ -3,7 +3,7 @@ module github.com/pfremm/envoy-acme
 go 1.19
 
 require (
-	github.com/envoyproxy/go-control-plane v0.9.9
+	github.com/envoyproxy/go-control-plane v0.10.3
 	github.com/ghodss/yaml v1.0.0
 	github.com/go-acme/lego/v4 v4.8.0
 	github.com/hashicorp/consul/api v1.7.0
@@ -13,11 +13,11 @@ require (
 	github.com/sirupsen/logrus v1.8.1
 	github.com/stretchr/testify v1.7.1
 	github.com/urfave/cli/v2 v2.14.1
-	google.golang.org/grpc v1.36.0
+	google.golang.org/grpc v1.45.0
 )
 
 require (
-	github.com/cncf/xds/go v0.0.0-20210312221358-fbca930ec8ed // indirect
+	github.com/cncf/xds/go v0.0.0-20220314180256-7f1daf1720fc // indirect
 	github.com/deepmap/oapi-codegen v1.6.1 // indirect
 	github.com/exoscale/egoscale v0.67.0 // indirect
 	github.com/jarcoal/httpmock v1.0.8 // indirect
@@ -45,7 +45,7 @@ require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/boombuler/barcode v1.0.1-0.20190219062509-6c824513bacc // indirect
 	github.com/cenkalti/backoff/v4 v4.1.1 // indirect
-	github.com/census-instrumentation/opencensus-proto v0.2.1 // indirect
+	github.com/census-instrumentation/opencensus-proto v0.3.0 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/cloudflare/cloudflare-go v0.20.0 // indirect
 	github.com/cpu/goacmedns v0.1.1 // indirect
@@ -53,7 +53,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dimchansky/utfbom v1.1.1 // indirect
 	github.com/dnsimple/dnsimple-go v0.70.1 // indirect
-	github.com/envoyproxy/protoc-gen-validate v0.1.0 // indirect; indirect// indirect
+	github.com/envoyproxy/protoc-gen-validate v0.6.7 // indirect; indirect// indirect
 	github.com/fatih/color v1.9.0 // indirect
 	github.com/fatih/structs v1.1.0 // indirect
 	github.com/form3tech-oss/jwt-go v3.2.2+incompatible // indirect
@@ -128,7 +128,7 @@ require (
 	go.opencensus.io v0.22.4 // indirect
 	go.uber.org/ratelimit v0.0.0-20180316092928-c15da0234277 // indirect
 	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e // indirect
-	golang.org/x/mod v0.4.2 // indirect
+	golang.org/x/mod v0.5.0 // indirect
 	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
 	golang.org/x/oauth2 v0.0.0-20220223155221-ee480838109b // indirect
 	golang.org/x/sys v0.0.0-20220906165534-d0df966e6959 // indirect
@@ -138,7 +138,7 @@ require (
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/api v0.35.0 // indirect
 	google.golang.org/appengine v1.6.6 // indirect
-	google.golang.org/genproto v0.0.0-20200904004341-0bd0a958aa1d // indirect
+	google.golang.org/genproto v0.0.0-20220329172620-7be39ac1afc7 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/ini.v1 v1.62.0 // indirect
 	gopkg.in/ns1/ns1-go.v2 v2.6.2 // indirect
