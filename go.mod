@@ -9,7 +9,7 @@ require (
 	github.com/hashicorp/consul/api v1.7.0
 	github.com/joho/godotenv v1.3.0
 	github.com/prometheus/client_golang v1.13.0
-	github.com/rs/xid v1.2.1
+	github.com/rs/xid v1.4.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/stretchr/testify v1.7.1
 	github.com/urfave/cli/v2 v2.14.1
