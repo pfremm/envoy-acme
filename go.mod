@@ -12,7 +12,7 @@ require (
 	github.com/rs/xid v1.2.1
 	github.com/sirupsen/logrus v1.8.1
 	github.com/stretchr/testify v1.7.1
-	github.com/urfave/cli/v2 v2.14.1
+	github.com/urfave/cli/v2 v2.24.1
 	google.golang.org/grpc v1.36.0
 )
 
