@@ -7,7 +7,7 @@ require (
 	github.com/ghodss/yaml v1.0.0
 	github.com/go-acme/lego/v4 v4.8.0
 	github.com/hashicorp/consul/api v1.7.0
-	github.com/joho/godotenv v1.3.0
+	github.com/joho/godotenv v1.5.1
 	github.com/prometheus/client_golang v1.13.0
 	github.com/rs/xid v1.2.1
 	github.com/sirupsen/logrus v1.8.1
