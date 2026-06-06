@@ -12,6 +12,7 @@ import (
 	envoy_service_secret_v3 "github.com/envoyproxy/go-control-plane/envoy/service/secret/v3"
 	"github.com/envoyproxy/go-control-plane/pkg/cache/types"
 	"github.com/envoyproxy/go-control-plane/pkg/cache/v3"
+	"github.com/envoyproxy/go-control-plane/pkg/resource/v3"
 	"github.com/envoyproxy/go-control-plane/pkg/server/v3"
 	"github.com/pfremm/envoy-acme/pkg/common"
 	"github.com/prometheus/client_golang/prometheus"
@@ -57,11 +58,6 @@ func (x *XdsService) RunServer(ctx context.Context, listener net.Listener, updat
 			xdsStreamOpenCounter.Inc()
 			return nil
 		},
-		StreamClosedFunc:   nil,
-		StreamRequestFunc:  nil,
-		StreamResponseFunc: nil,
-		FetchRequestFunc:   nil,
-		FetchResponseFunc:  nil,
 	}
 	snapshotCache := cache.NewSnapshotCache(false, &StandardNodeHash{}, nil)
 	srv := server.NewServer(ctx, snapshotCache, callback)
@@ -69,8 +65,11 @@ func (x *XdsService) RunServer(ctx context.Context, listener net.Listener, updat
 	go func() {
 		for {
 			upstreams := <-update
-			err := snapshotCache.SetSnapshot("default", generateSnapshot(upstreams))
+			snapshot, err := generateSnapshot(upstreams)
 			if err != nil {
+				panic(err)
+			}
+			if err := snapshotCache.SetSnapshot(ctx, "default", snapshot); err != nil {
 				panic(err)
 			}
 		}
@@ -83,7 +82,7 @@ func (x *XdsService) RunServer(ctx context.Context, listener net.Listener, updat
 	return grpcServer.Serve(listener)
 }
 
-func generateSnapshot(notification *common.Notification) cache.Snapshot {
+func generateSnapshot(notification *common.Notification) (*cache.Snapshot, error) {
 	var resources []types.Resource
 
 	for _, cert := range notification.Certificates {
@@ -107,5 +106,10 @@ func generateSnapshot(notification *common.Notification) cache.Snapshot {
 		resources = append(resources, secret)
 	}
 
-	return cache.NewSnapshot(fmt.Sprintf("%d", time.Now().Unix()), nil, nil, nil, nil, nil, resources)
+	return cache.NewSnapshot(
+		fmt.Sprintf("%d", time.Now().Unix()),
+		map[resource.Type][]types.Resource{
+			resource.SecretType: resources,
+		},
+	)
 }

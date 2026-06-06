@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
-	"io/ioutil"
+	"io"
 	"net"
 	"net/http"
 	"os"
 
-	"github.com/ghodss/yaml"
+	"github.com/goccy/go-yaml"
 	"github.com/pfremm/envoy-acme/pkg/acme_service"
 	"github.com/pfremm/envoy-acme/pkg/common"
 	"github.com/pfremm/envoy-acme/pkg/xds_service"
@@ -41,7 +41,7 @@ func CmdStart(c *cli.Context) error {
 	if err != nil {
 		logger.WithError(err).Fatal("failed open config file")
 	}
-	configBytes, err := ioutil.ReadAll(f)
+	configBytes, err := io.ReadAll(f)
 	if err != nil {
 		logger.WithError(err).Fatal("failed read config file")
 	}

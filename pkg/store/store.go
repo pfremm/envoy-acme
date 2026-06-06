@@ -3,8 +3,8 @@ package store
 import (
 	"crypto/x509"
 	"errors"
-	"github.com/go-acme/lego/v4/certcrypto"
-	"github.com/go-acme/lego/v4/certificate"
+	"github.com/go-acme/lego/v5/certcrypto"
+	"github.com/go-acme/lego/v5/certificate"
 	"time"
 )
 
@@ -31,8 +31,12 @@ type Certificates struct {
 }
 
 func NewStoreResource(certificateResource *certificate.Resource) *Certificates {
+	domain := ""
+	if len(certificateResource.Domains) > 0 {
+		domain = certificateResource.Domains[0]
+	}
 	return &Certificates{
-		Domain:            certificateResource.Domain,
+		Domain:            domain,
 		CertURL:           certificateResource.CertURL,
 		CertStableURL:     certificateResource.CertStableURL,
 		PrivateKey:        certificateResource.PrivateKey,
@@ -44,7 +48,7 @@ func NewStoreResource(certificateResource *certificate.Resource) *Certificates {
 
 func (c *Certificates) ToCertificateResource() *certificate.Resource {
 	return &certificate.Resource{
-		Domain:            c.Domain,
+		Domains:           []string{c.Domain},
 		CertURL:           c.CertURL,
 		CertStableURL:     c.CertStableURL,
 		PrivateKey:        c.PrivateKey,

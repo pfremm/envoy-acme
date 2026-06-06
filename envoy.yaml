@@ -10,14 +10,6 @@ admin:
       address: 0.0.0.0
       port_value: 8111
 static_resources:
-  # secrets:
-  # - name: server_cert
-  #   tls_certificate:
-  #     certificate_chain:
-  #       filename: hoge.crt
-  #     private_key:
-  #       filename: hoge.key
-static_resources:
   listeners:
   - name: listener_0
     address:
@@ -41,6 +33,8 @@ static_resources:
                     inline_string: hello envoy
           http_filters:
           - name: envoy.filters.http.router
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
       transport_socket:
         name: envoy.transport_sockets.tls
         typed_config:
@@ -50,7 +44,7 @@ static_resources:
             - name: "example.com"
               sds_config:
                 resource_api_version: v3
-                api_config_source:   
+                api_config_source:
                   api_type: GRPC
                   grpc_services:
                     envoy_grpc:
@@ -60,7 +54,11 @@ static_resources:
   clusters:
   - name: envoy_acme_sds_cluster
     connect_timeout: 0.25s
-    http2_protocol_options: {}
+    typed_extension_protocol_options:
+      envoy.extensions.upstreams.http.v3.HttpProtocolOptions:
+        "@type": type.googleapis.com/envoy.extensions.upstreams.http.v3.HttpProtocolOptions
+        explicit_http_config:
+          http2_protocol_options: {}
     load_assignment:
       cluster_name: envoy_acme_sds_cluster
       endpoints:
