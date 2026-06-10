@@ -7,19 +7,20 @@ import (
 	"encoding/json"
 	"encoding/pem"
 	"errors"
-	"github.com/go-acme/lego/v4/certcrypto"
-	"github.com/go-acme/lego/v4/registration"
+	"github.com/go-acme/lego/v5/acme"
+	"github.com/go-acme/lego/v5/certcrypto"
+	"github.com/go-acme/lego/v5/registration"
 )
 
 var _ registration.User = &Account{}
 
 type Account struct {
-	Email        string                 `json:"email,omitempty"`
-	Registration *registration.Resource `json:"registration,omitempty"`
-	AccountKey   AccountKey             `json:"key,omitempty"`
+	Email        string                `json:"email,omitempty"`
+	Registration *acme.ExtendedAccount `json:"registration,omitempty"`
+	AccountKey   AccountKey            `json:"key,omitempty"`
 }
 
-func NewAccount(email string, privateKey crypto.PrivateKey) *Account {
+func NewAccount(email string, privateKey crypto.Signer) *Account {
 	return &Account{
 		Email:        email,
 		Registration: nil,
@@ -30,10 +31,10 @@ func NewAccount(email string, privateKey crypto.PrivateKey) *Account {
 func (u *Account) GetEmail() string {
 	return u.Email
 }
-func (u Account) GetRegistration() *registration.Resource {
+func (u Account) GetRegistration() *acme.ExtendedAccount {
 	return u.Registration
 }
-func (u *Account) GetPrivateKey() crypto.PrivateKey {
+func (u *Account) GetPrivateKey() crypto.Signer {
 	return u.AccountKey.Key
 }
 
@@ -42,7 +43,7 @@ var _ json.Unmarshaler = &AccountKey{}
 var ErrUnknownPrivateKeyType = errors.New("unknown private key type")
 
 type AccountKey struct {
-	Key crypto.PrivateKey
+	Key crypto.Signer
 }
 
 func (a *AccountKey) UnmarshalJSON(in []byte) error {
@@ -54,13 +55,23 @@ func (a *AccountKey) UnmarshalJSON(in []byte) error {
 
 	keyBlock, _ := pem.Decode([]byte(certStr))
 
-	var key interface{}
+	var key crypto.Signer
 	var err error
 	switch keyBlock.Type {
 	case "RSA PRIVATE KEY":
 		key, err = x509.ParsePKCS1PrivateKey(keyBlock.Bytes)
 	case "EC PRIVATE KEY":
 		key, err = x509.ParseECPrivateKey(keyBlock.Bytes)
+	case "PRIVATE KEY":
+		parsed, parseErr := x509.ParsePKCS8PrivateKey(keyBlock.Bytes)
+		if parseErr != nil {
+			return parseErr
+		}
+		var ok bool
+		key, ok = parsed.(crypto.Signer)
+		if !ok {
+			return ErrUnknownPrivateKeyType
+		}
 	default:
 		return ErrUnknownPrivateKeyType
 	}
@@ -81,7 +92,7 @@ func (a *AccountKey) MarshalJSON() ([]byte, error) {
 	return json.Marshal(string(certOut.Bytes()))
 }
 
-func NewAccountKey(key crypto.PrivateKey) AccountKey {
+func NewAccountKey(key crypto.Signer) AccountKey {
 	return AccountKey{
 		Key: key,
 	}

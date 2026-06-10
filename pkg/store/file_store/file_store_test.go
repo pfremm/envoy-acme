@@ -4,12 +4,11 @@ import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
-	"io/ioutil"
 	"os"
 	"testing"
 	"time"
 
-	"github.com/go-acme/lego/v4/certificate"
+	"github.com/go-acme/lego/v5/certificate"
 	"github.com/pfremm/envoy-acme/pkg/store"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -19,7 +18,7 @@ func TestFileStore(t *testing.T) {
 	assert := assert.New(t)
 	require := require.New(t)
 
-	tmpDir, err := ioutil.TempDir("", "acme-file-store")
+	tmpDir, err := os.MkdirTemp("", "acme-file-store")
 	require.Nil(err)
 	defer os.RemoveAll(tmpDir)
 
@@ -46,7 +45,7 @@ func TestFileStore(t *testing.T) {
 
 	domain := "example.com"
 	testResource := store.NewStoreResource(&certificate.Resource{
-		Domain:            domain,
+		Domains:           []string{domain},
 		CertURL:           "cert_url",
 		CertStableURL:     "cert_stable_url",
 		PrivateKey:        []byte("private_key"),
@@ -60,7 +59,7 @@ func TestFileStore(t *testing.T) {
 	response, err := fileStore.FetchResource(domain)
 	require.Nil(err)
 	require.NotNil(response)
-	assert.EqualValues(testResource, response.ToCertificateResource())
+	assert.EqualValues(testResource, response)
 
 	lockTimeout := 100 * time.Millisecond
 	res, err := fileStore.Lock("a", lockTimeout)

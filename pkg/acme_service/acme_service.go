@@ -1,6 +1,7 @@
 package acme_service
 
 import (
+	"context"
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
@@ -11,11 +12,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-acme/lego/v4/certcrypto"
-	"github.com/go-acme/lego/v4/certificate"
-	"github.com/go-acme/lego/v4/lego"
-	"github.com/go-acme/lego/v4/providers/dns"
-	"github.com/go-acme/lego/v4/registration"
+	"github.com/go-acme/lego/v5/certcrypto"
+	"github.com/go-acme/lego/v5/certificate"
+	"github.com/go-acme/lego/v5/lego"
+	"github.com/go-acme/lego/v5/providers/dns"
+	"github.com/go-acme/lego/v5/registration"
 	"github.com/pfremm/envoy-acme/pkg/common"
 	"github.com/pfremm/envoy-acme/pkg/store"
 	"github.com/prometheus/client_golang/prometheus"
@@ -172,7 +173,7 @@ func (a *AcmeService) FetchCertificate(site *common.Site) (bool, error) {
 			return false, fmt.Errorf("error create new lego client %w", err)
 		}
 
-		reg, err := client.Registration.Register(registration.RegisterOptions{TermsOfServiceAgreed: true})
+		reg, err := client.Registration.Register(context.Background(), registration.RegisterOptions{TermsOfServiceAgreed: true})
 		if err != nil {
 			return false, fmt.Errorf("error acme user registration %w", err)
 		}
@@ -188,7 +189,6 @@ func (a *AcmeService) FetchCertificate(site *common.Site) (bool, error) {
 	}
 
 	clientConfig := lego.NewConfig(account)
-	clientConfig.Certificate.KeyType = certcrypto.RSA2048
 	clientConfig.CADirURL = a.Config.CaDir
 
 	client, err := lego.NewClient(clientConfig)
@@ -221,9 +221,10 @@ func (a *AcmeService) FetchCertificate(site *common.Site) (bool, error) {
 	request := certificate.ObtainRequest{
 		Domains: site.Domains,
 		Bundle:  true,
+		KeyType: certcrypto.RSA2048,
 	}
 	siteLogger.WithField("request", request).Debug("start obtain request")
-	certificates, err := client.Certificate.Obtain(request)
+	certificates, err := client.Certificate.Obtain(context.Background(), request)
 	if err != nil {
 		return false, fmt.Errorf("error obtain certificate %w", err)
 	}

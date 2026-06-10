@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/go-acme/lego/v4/certificate"
+	"github.com/go-acme/lego/v5/certificate"
 	"github.com/pfremm/envoy-acme/pkg/store"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -47,7 +47,7 @@ func TestConsulStore(t *testing.T) {
 
 	domain := "example.com"
 	testResource := store.NewStoreResource(&certificate.Resource{
-		Domain:            domain,
+		Domains:           []string{domain},
 		CertURL:           "cert_url",
 		CertStableURL:     "cert_stable_url",
 		PrivateKey:        []byte("private_key"),
@@ -61,7 +61,7 @@ func TestConsulStore(t *testing.T) {
 	response, err := consulStore.FetchResource(domain)
 	require.Nil(err)
 	require.NotNil(response)
-	assert.EqualValues(testResource, response.ToCertificateResource())
+	assert.EqualValues(testResource, response)
 
 	lockTimeout := 100 * time.Millisecond
 	res, err := consulStore.Lock("a", lockTimeout)
