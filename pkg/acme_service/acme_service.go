@@ -245,6 +245,12 @@ func (a *AcmeService) FireNotification() {
 			a.logger.WithError(err).Warn("error on fetch resource")
 			continue
 		}
+		// The xDS layer names each SDS secret after Certificates.Domain.
+		// Consumers reference the secret by the SITE name (see README:
+		// "name: setting-names — It will be the setting name of SDS"),
+		// not by the certificate's first domain, so stamp the site name
+		// here where the pairing is known.
+		cert.Domain = site.Name
 		certs = append(certs, cert)
 	}
 	a.notificationChannel <- &common.Notification{
